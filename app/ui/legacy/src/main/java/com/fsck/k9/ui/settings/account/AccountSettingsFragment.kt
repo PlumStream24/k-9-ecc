@@ -19,6 +19,7 @@ import com.fsck.k9.activity.ManageIdentities
 import com.fsck.k9.activity.setup.AccountSetupComposition
 import com.fsck.k9.activity.setup.AccountSetupIncoming
 import com.fsck.k9.activity.setup.AccountSetupOutgoing
+import com.fsck.k9.ui.ecckeygen.EccKeygenActivity
 import com.fsck.k9.controller.MessagingController
 import com.fsck.k9.crypto.OpenPgpApiHelper
 import com.fsck.k9.fragment.ConfirmationDialogFragment
@@ -86,6 +87,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), ConfirmationDialogFr
         initializeCryptoSettings(account)
         initializeFolderSettings(account)
         initializeNotifications(account)
+        initializeEccKeyGen(account)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -347,6 +349,13 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), ConfirmationDialogFr
         }
     }
 
+    private fun initializeEccKeyGen(account: Account) {
+        findPreference<Preference>(PREFERENCE_ECC_KEYGEN)?.onClick {
+            val intent = EccKeygenActivity.createIntent(requireContext(), account.uuid)
+            startActivity(intent)
+        }
+    }
+
     private fun initializeFolderSettings(account: Account) {
         findPreference<Preference>(PREFERENCE_FOLDERS)?.let {
             if (!messagingController.isMoveCapable(account)) {
@@ -451,6 +460,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), ConfirmationDialogFr
         private const val PREFERENCE_OPENPGP_ENABLE = "openpgp_provider"
         private const val PREFERENCE_OPENPGP_KEY = "openpgp_key"
         private const val PREFERENCE_AUTOCRYPT_TRANSFER = "autocrypt_transfer"
+        private const val PREFERENCE_ECC_KEYGEN = "ecc_keygen"
         private const val PREFERENCE_FOLDERS = "folders"
         private const val PREFERENCE_AUTO_EXPAND_FOLDER = "account_setup_auto_expand_folder"
         private const val PREFERENCE_ARCHIVE_FOLDER = "archive_folder"

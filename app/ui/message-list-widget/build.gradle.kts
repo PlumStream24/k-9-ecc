@@ -1,5 +1,6 @@
 plugins {
     id(ThunderbirdPlugins.Library.android)
+    id("org.jetbrains.kotlin.android")
 }
 
 dependencies {
@@ -7,6 +8,7 @@ dependencies {
     implementation(projects.app.core)
 
     implementation(libs.timber)
+    implementation("androidx.core:core-ktx:1.10.0")
 }
 
 android {

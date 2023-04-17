@@ -1,5 +1,6 @@
 plugins {
     id(ThunderbirdPlugins.Library.android)
+    id("org.jetbrains.kotlin.android")
 }
 
 dependencies {
@@ -10,6 +11,7 @@ dependencies {
     api(libs.koin.core)
     api(libs.mockito.core)
     api(libs.mockito.kotlin)
+    implementation("androidx.core:core-ktx:1.10.0")
 }
 
 android {

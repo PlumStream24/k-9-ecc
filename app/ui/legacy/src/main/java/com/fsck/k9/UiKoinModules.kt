@@ -8,6 +8,7 @@ import com.fsck.k9.ui.account.accountUiModule
 import com.fsck.k9.ui.base.uiBaseModule
 import com.fsck.k9.ui.changelog.changelogUiModule
 import com.fsck.k9.ui.choosefolder.chooseFolderUiModule
+import com.fsck.k9.ui.ecckeygen.eccKeygenModule
 import com.fsck.k9.ui.endtoend.endToEndUiModule
 import com.fsck.k9.ui.folders.foldersUiModule
 import com.fsck.k9.ui.identity.identityUiModule
@@ -26,6 +27,7 @@ val uiModules = listOf(
     uiModule,
     settingsUiModule,
     endToEndUiModule,
+    eccKeygenModule,
     foldersUiModule,
     messageListUiModule,
     manageFoldersUiModule,

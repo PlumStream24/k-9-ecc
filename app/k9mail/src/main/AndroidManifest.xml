@@ -152,6 +152,12 @@
             />
 
         <activity
+            android:name=".ui.ecckeygen.EccKeygenActivity"
+            android:configChanges="locale"
+            android:label="@string/ecc_generate_key"
+            />
+
+        <activity
             android:name=".activity.MessageList"
             android:launchMode="singleTop"
             android:exported="true">

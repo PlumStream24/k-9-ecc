@@ -1,5 +1,6 @@
 plugins {
     id(ThunderbirdPlugins.Library.android)
+    id("org.jetbrains.kotlin.android")
 }
 
 dependencies {
@@ -8,6 +9,7 @@ dependencies {
     implementation(projects.app.autodiscovery.api)
 
     implementation(libs.timber)
+    implementation("androidx.core:core-ktx:1.10.0")
 
     testImplementation(projects.app.testing)
     testImplementation(projects.backend.imap)

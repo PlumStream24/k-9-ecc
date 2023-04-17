@@ -6,6 +6,7 @@ import com.fsck.k9.Account.SpecialFolderSelection
 import com.fsck.k9.NotificationLight
 import com.fsck.k9.NotificationVibration
 import com.fsck.k9.Preferences
+import com.fsck.k9.ecdsa.EcKeyPair
 import com.fsck.k9.job.K9JobManager
 import com.fsck.k9.notification.NotificationChannelManager
 import com.fsck.k9.notification.NotificationController
@@ -285,5 +286,13 @@ class AccountSettingsDataStore(
             )
         }
         notificationSettingsChanged = true
+    }
+
+    private fun getEccKeyPair(acc: Account): EcKeyPair? {
+        return acc.EccKeyPair
+    }
+
+    private fun setEccKeyPair(acc: Account, kp: EcKeyPair) {
+        acc.EccKeyPair = kp
     }
 }

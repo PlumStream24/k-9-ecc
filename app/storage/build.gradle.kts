@@ -1,5 +1,6 @@
 plugins {
     id(ThunderbirdPlugins.Library.android)
+    id("org.jetbrains.kotlin.android")
 }
 
 dependencies {
@@ -11,6 +12,7 @@ dependencies {
     implementation(libs.mime4j.core)
     implementation(libs.commons.io)
     implementation(libs.moshi)
+    implementation("androidx.core:core-ktx:1.10.0")
 
     testImplementation(projects.mail.testing)
     testImplementation(projects.app.testing)

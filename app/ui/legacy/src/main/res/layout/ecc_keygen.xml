@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".endtoend.AutocryptKeyTransferActivity">
+
+    <include layout="@layout/toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp">
+
+        <Button
+            android:id="@+id/generateKeyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:text="@string/ecc_generate_key"
+            />
+
+                <LinearLayout
+            android:id="@+id/privKeyLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/privKeyLabel"
+                style="?android:textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Private Key: "
+                />
+
+            <TextView
+                android:id="@+id/privKey"
+                style="?android:textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text=""
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pubKeyLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/pubKeyLabel"
+                style="?android:textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Public Key: "
+                />
+
+            <TextView
+                android:id="@+id/pubKey"
+                style="?android:textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text=""
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

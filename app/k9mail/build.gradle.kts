@@ -1,5 +1,6 @@
 plugins {
     id(ThunderbirdPlugins.App.android)
+    id("org.jetbrains.kotlin.android")
 }
 
 val testCoverageEnabled: Boolean by extra
@@ -16,6 +17,7 @@ dependencies {
     implementation(projects.backend.imap)
     implementation(projects.backend.pop3)
     implementation(projects.backend.webdav)
+    implementation("androidx.core:core-ktx:1.10.0")
     debugImplementation(projects.backend.demo)
 
     implementation(libs.androidx.appcompat)

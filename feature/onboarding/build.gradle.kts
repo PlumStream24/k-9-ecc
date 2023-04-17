@@ -1,5 +1,6 @@
 plugins {
     id(ThunderbirdPlugins.Library.androidCompose)
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -9,4 +10,5 @@ android {
 
 dependencies {
     implementation(projects.core.ui.compose.designsystem)
+    implementation("androidx.core:core-ktx:1.10.0")
 }

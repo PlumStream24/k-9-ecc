@@ -1,5 +1,6 @@
 package com.fsck.k9
 
+import com.fsck.k9.ecdsa.EcKeyPair
 import com.fsck.k9.backend.api.SyncConfig.ExpungePolicy
 import com.fsck.k9.mail.Address
 import com.fsck.k9.mail.ServerSettings
@@ -424,6 +425,10 @@ class Account(override val uuid: String) : BaseAccount {
     @get:Synchronized
     @set:Synchronized
     var shouldMigrateToOAuth = false
+
+    @get:Synchronized
+    @set:Synchronized
+    var EccKeyPair: EcKeyPair? = null
 
     /**
      * @param automaticCheckIntervalMinutes or -1 for never.

@@ -1343,4 +1343,5 @@ You can keep this message and use it as a backup for your secret key. If you wan
     <string name="clipboard_label_email_address">Email address</string>
     <!-- A user visible label for the name and email address copied to the clipboard -->
     <string name="clipboard_label_name_and_email_address">Name and email address</string>
+    <string name="ecc_generate_key">Generate Key</string>
 </resources>

@@ -1,3 +1,4 @@
+apply(plugin = "org.jetbrains.kotlin.android")
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id(ThunderbirdPlugins.Library.android)
@@ -27,6 +28,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.mime4j.core)
     implementation(libs.mime4j.dom)
+    implementation("androidx.core:core-ktx:1.10.0")
 
     testApi(projects.core.testing)
     testImplementation(projects.mail.testing)

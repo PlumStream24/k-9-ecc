@@ -1,16 +1,20 @@
+apply(plugin = "org.jetbrains.kotlin.android")
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id(ThunderbirdPlugins.Library.android)
     alias(libs.plugins.kotlin.parcelize)
+    kotlin("android")
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
     api(projects.app.ui.base)
     implementation(projects.app.core)
     implementation(projects.app.autodiscovery.api)
     implementation(projects.app.autodiscovery.providersxml)
     implementation(projects.mail.common)
     implementation(projects.uiUtils.toolbarBottomSheet)
+    implementation("androidx.core:core-ktx:1.10.0")
 
     // Remove AccountSetupIncoming's dependency on these
     compileOnly(projects.mail.protocols.imap)

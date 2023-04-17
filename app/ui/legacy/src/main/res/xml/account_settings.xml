@@ -388,6 +388,11 @@
 
     </PreferenceScreen>
 
+    <Preference
+        android:icon="?attr/iconPreferencesCrypto"
+        android:key="ecc_keygen"
+        android:title="ECC Key" />
+
     <PreferenceScreen
         android:icon="?attr/iconPreferencesCrypto"
         android:key="openpgp"

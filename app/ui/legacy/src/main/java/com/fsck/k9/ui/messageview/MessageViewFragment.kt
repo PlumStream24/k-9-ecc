@@ -9,6 +9,7 @@ import android.content.IntentSender.SendIntentException
 import android.os.Bundle
 import android.os.Parcelable
 import android.os.SystemClock
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.Menu
@@ -30,6 +31,9 @@ import com.fsck.k9.activity.MessageLoaderHelper.MessageLoaderCallbacks
 import com.fsck.k9.activity.MessageLoaderHelperFactory
 import com.fsck.k9.controller.MessageReference
 import com.fsck.k9.controller.MessagingController
+import com.fsck.k9.ecdsa.EcSign
+import com.fsck.k9.ecdsa.EcSignature
+import com.fsck.k9.ecdsa.hash.EcSha256
 import com.fsck.k9.fragment.AttachmentDownloadDialogFragment
 import com.fsck.k9.fragment.ConfirmationDialogFragment
 import com.fsck.k9.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener
@@ -283,6 +287,7 @@ class MessageViewFragment :
         menu.findItem(R.id.move_to_drafts).isVisible = isOutbox
         menu.findItem(R.id.unsubscribe).isVisible = canMessageBeUnsubscribed()
         menu.findItem(R.id.show_headers).isVisible = true
+        menu.findItem(R.id.verify_sign).isVisible = true
         menu.findItem(R.id.compose).isVisible = true
 
         val toggleTheme = menu.findItem(R.id.toggle_message_view_theme)
@@ -319,6 +324,7 @@ class MessageViewFragment :
             R.id.move_to_drafts -> onMoveToDrafts()
             R.id.unsubscribe -> onUnsubscribe()
             R.id.show_headers -> onShowHeaders()
+            R.id.verify_sign -> onVerifySign()
             else -> return false
         }
 
@@ -328,6 +334,22 @@ class MessageViewFragment :
     private fun onShowHeaders() {
         val launchIntent = MessageSourceActivity.createLaunchIntent(requireActivity(), messageReference)
         startActivity(launchIntent)
+    }
+
+    private fun onVerifySign() {
+        var isValid : Boolean = false
+        val msg : String = message!!.preview
+        val arr = msg.split(" ===== ").toTypedArray()
+        if (arr.getOrNull(1) !== null) {
+            Log.d("Sign", arr[1])
+            val signstr = arr[1].split(" ").toTypedArray()
+            val r =  signstr[0].trim().toBigInteger()
+            val s = signstr[1].trim().toBigInteger()
+            Log.d("isValid", "Inside If")
+            isValid = EcSign.verifySignature(account.EccKeyPair!!.publicKey, arr[0].toByteArray(), EcSha256, EcSignature(r,s))
+        }
+
+        Log.d("isValid", isValid.toString())
     }
 
     private fun onToggleTheme() {

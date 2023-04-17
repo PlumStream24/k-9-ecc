@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/ecc_sign_switch"
+        android:title="Signature Enabled"
+        android:checkable="true"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/add_attachment"
         android:title="@string/add_attachment_action"
         android:icon="?attr/iconActionAddAttachment"

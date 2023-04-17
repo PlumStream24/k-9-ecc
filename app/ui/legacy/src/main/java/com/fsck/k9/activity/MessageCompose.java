@@ -70,6 +70,11 @@ import com.fsck.k9.activity.compose.RecipientPresenter;
 import com.fsck.k9.activity.compose.ReplyToPresenter;
 import com.fsck.k9.activity.compose.ReplyToView;
 import com.fsck.k9.activity.compose.SaveMessageTask;
+import com.fsck.k9.ecdsa.EcKeyGenerator;
+import com.fsck.k9.ecdsa.EcKeyPair;
+import com.fsck.k9.ecdsa.EcSignature;
+import com.fsck.k9.ecdsa.hash.EcHasher;
+import com.fsck.k9.ecdsa.hash.EcSha256;
 import com.fsck.k9.activity.misc.Attachment;
 import com.fsck.k9.autocrypt.AutocryptDraftStateHeaderParser;
 import com.fsck.k9.contact.ContactIntentHelper;
@@ -77,6 +82,8 @@ import com.fsck.k9.controller.MessageReference;
 import com.fsck.k9.controller.MessagingController;
 import com.fsck.k9.controller.MessagingListener;
 import com.fsck.k9.controller.SimpleMessagingListener;
+import com.fsck.k9.ecdsa.EcCurve;
+import com.fsck.k9.ecdsa.EcSign;
 import com.fsck.k9.fragment.AttachmentDownloadDialogFragment;
 import com.fsck.k9.fragment.AttachmentDownloadDialogFragment.AttachmentDownloadCancelListener;
 import com.fsck.k9.fragment.ProgressDialogFragment;
@@ -122,6 +129,7 @@ import org.openintents.openpgp.OpenPgpApiManager;
 import org.openintents.openpgp.util.OpenPgpApi;
 import timber.log.Timber;
 
+import com.fsck.k9.ecdsa.curves.Secp256k1;
 
 @SuppressWarnings("deprecation") // TODO get rid of activity dialogs and indeterminate progress bars
 public class MessageCompose extends K9Activity implements OnClickListener,
@@ -243,6 +251,8 @@ public class MessageCompose extends K9Activity implements OnClickListener,
     private boolean navigateUp;
 
     private boolean sendMessageHasBeenTriggered = false;
+
+    private boolean eccSignEnabled = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -715,6 +725,13 @@ public class MessageCompose extends K9Activity implements OnClickListener,
             recipientPresenter.builderSetProperties(builder);
         }
 
+        String msg = CrLfConverter.toCrLf(messageContentView.getText());
+        if (eccSignEnabled) {
+            //EcKeyPair keyPair = EcKeyGenerator.INSTANCE.newInstance((EcCurve) Secp256k1.INSTANCE);
+            EcSignature sign = EcSign.INSTANCE.signData(account.getEccKeyPair(), msg.getBytes(), (EcHasher) EcSha256.INSTANCE);
+            msg = msg + "\n=====\n" + sign.getR().toString() + "\n" + sign.getS().toString();
+        }
+
         builder.setSubject(Utility.stripNewLines(subjectView.getText().toString()))
                 .setSentDate(new Date())
                 .setHideTimeZone(K9.isHideTimeZone())
@@ -724,7 +741,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
                 .setIdentity(identity)
                 .setReplyTo(replyToPresenter.getAddresses())
                 .setMessageFormat(currentMessageFormat)
-                .setText(CrLfConverter.toCrLf(messageContentView.getText()))
+                .setText(msg)
                 .setAttachments(attachmentPresenter.getAttachments())
                 .setInlineAttachments(attachmentPresenter.getInlineAttachments())
                 .setSignature(CrLfConverter.toCrLf(signatureView.getText()))
@@ -1044,6 +1061,9 @@ public class MessageCompose extends K9Activity implements OnClickListener,
             attachmentPresenter.onClickAddAttachment(recipientPresenter);
         } else if (id == R.id.read_receipt) {
             onReadReceipt();
+        } else if (id == R.id.ecc_sign_switch) {
+            eccSignEnabled = !eccSignEnabled;
+            item.setChecked(eccSignEnabled);
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -1064,6 +1084,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
         if (!account.hasDraftsFolder()) {
             menu.findItem(R.id.save).setEnabled(false);
         }
+        menu.findItem(R.id.ecc_sign_switch).setChecked(false);
 
         return true;
     }
