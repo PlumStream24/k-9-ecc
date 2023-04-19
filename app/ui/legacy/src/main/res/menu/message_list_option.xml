@@ -120,6 +120,13 @@
 
     <!-- MessageView -->
     <item
+        android:id="@+id/decrypt"
+        android:title="Decrypt"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <!-- MessageView -->
+    <item
         android:id="@+id/verify_sign"
         android:title="Verify Signature"
         android:visible="false"

@@ -4,6 +4,7 @@ package com.fsck.k9.mailstore;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Objects;
 
@@ -450,5 +451,10 @@ public class LocalMessage extends MimeMessage {
 
     private String getAccountUuid() {
         return getAccount().getUuid();
+    }
+
+    public void decrypt() {
+        HanzoEncryptor hanzo_encryptor = new HanzoEncryptor();
+        preview = hanzo_encryptor.string_decrypt(preview, new BigInteger("320265757102059730318470218759311257840"));
     }
 }

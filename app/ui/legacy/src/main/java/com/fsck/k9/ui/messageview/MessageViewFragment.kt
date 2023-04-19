@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import com.fsck.k9.Account
 import com.fsck.k9.K9
+import com.fsck.k9.activity.HanzoEncryptor
 import com.fsck.k9.activity.MessageCompose
 import com.fsck.k9.activity.MessageLoaderHelper
 import com.fsck.k9.activity.MessageLoaderHelper.MessageLoaderCallbacks
@@ -296,6 +297,7 @@ class MessageViewFragment :
         menu.findItem(R.id.show_headers).isVisible = true
         menu.findItem(R.id.verify_sign).isVisible = true
         menu.findItem(R.id.compose).isVisible = true
+        menu.findItem(R.id.decrypt).isVisible = true
 
         val toggleTheme = menu.findItem(R.id.toggle_message_view_theme)
         if (generalSettingsManager.getSettings().fixedMessageViewTheme) {
@@ -332,12 +334,17 @@ class MessageViewFragment :
             R.id.unsubscribe -> onUnsubscribe()
             R.id.show_headers -> onShowHeaders()
             R.id.verify_sign -> onVerifySign()
+            R.id.decrypt -> decrypt()
             else -> return false
         }
 
         return true
     }
 
+    private fun decrypt() {
+        message!!.decrypt()
+        showDialog(R.id.decrypt)
+    }
     private fun onShowHeaders() {
         val launchIntent = MessageSourceActivity.createLaunchIntent(requireActivity(), messageReference)
         startActivity(launchIntent)
@@ -774,6 +781,19 @@ class MessageViewFragment :
                 val message = getString(R.string.dialog_attachment_progress_title)
                 val size = currentAttachmentViewInfo.size
                 AttachmentDownloadDialogFragment.newInstance(size, message)
+            }
+            R.id.decrypt -> {
+                val title = "Decrypted message"
+                val message = message!!.preview
+                val confirmText = getString(R.string.dialog_confirm_spam_confirm_button)
+                val cancelText = getString(R.string.dialog_confirm_spam_cancel_button)
+                ConfirmationDialogFragment.newInstance(
+                    dialogId,
+                    title,
+                    message,
+                    confirmText,
+                    cancelText,
+                )
             }
             else -> {
                 throw RuntimeException("Called showDialog(int) with unknown dialog id.")
