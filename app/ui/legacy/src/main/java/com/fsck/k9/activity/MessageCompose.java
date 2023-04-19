@@ -2,6 +2,7 @@ package com.fsck.k9.activity;
 
 
 import java.io.File;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -253,6 +254,8 @@ public class MessageCompose extends K9Activity implements OnClickListener,
     private boolean sendMessageHasBeenTriggered = false;
 
     private boolean eccSignEnabled = false;
+
+    private boolean hanzo_encrypt = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -732,6 +735,12 @@ public class MessageCompose extends K9Activity implements OnClickListener,
             msg = msg + "\n=====\n" + sign.getR().toString() + "\n" + sign.getS().toString();
         }
 
+        if (hanzo_encrypt) {
+            HanzoEncryptor hanzoEncryptor = new HanzoEncryptor();
+            BigInteger key = new BigInteger("320265757102059730318470218759311257840");
+            msg = hanzoEncryptor.string_encrypt(msg, key);
+        }
+
         builder.setSubject(Utility.stripNewLines(subjectView.getText().toString()))
                 .setSentDate(new Date())
                 .setHideTimeZone(K9.isHideTimeZone())
@@ -1064,6 +1073,9 @@ public class MessageCompose extends K9Activity implements OnClickListener,
         } else if (id == R.id.ecc_sign_switch) {
             eccSignEnabled = !eccSignEnabled;
             item.setChecked(eccSignEnabled);
+        } else if (id == R.id.hanzo_encrypt) {
+            hanzo_encrypt = !hanzo_encrypt;
+            item.setChecked(hanzo_encrypt);
         } else {
             return super.onOptionsItemSelected(item);
         }
