@@ -48,7 +48,7 @@ class EccKeygenActivity : K9Activity() {
 
     fun setKeys(kp: EcKeyPair) {
         privKey.text = kp.privateKey.toString()
-        pubKey.text = kp.publicKey.x.toString() + "\n" + kp.publicKey.y.toString()
+        pubKey.text = kp.publicKey.x.toString() + " " + kp.publicKey.y.toString()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

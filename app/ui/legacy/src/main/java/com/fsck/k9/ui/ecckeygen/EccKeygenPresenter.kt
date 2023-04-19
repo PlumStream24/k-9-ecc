@@ -22,8 +22,6 @@ class EccKeygenPresenter internal constructor(
         account = preferences.getAccount(accountUuid) ?: error("Account $accountUuid not found")
         keyPair = account.EccKeyPair
         if (keyPair != null) {
-            //keyPair = EcKeyGenerator.newInstance(Secp256k1)
-            account.EccKeyPair = keyPair
             view.setKeys(keyPair!!)
         }
 

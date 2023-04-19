@@ -52,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text=""
+                android:textIsSelectable="true"
                 />
 
         </LinearLayout>
@@ -80,6 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text=""
+                android:textIsSelectable="true"
                 />
 
         </LinearLayout>

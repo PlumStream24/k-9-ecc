@@ -1,14 +1,17 @@
 package com.fsck.k9.ui.messageview
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
 import android.content.IntentSender.SendIntentException
 import android.os.Bundle
 import android.os.Parcelable
 import android.os.SystemClock
+import android.text.InputType
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -17,6 +20,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.withStyledAttributes
@@ -31,8 +35,10 @@ import com.fsck.k9.activity.MessageLoaderHelper.MessageLoaderCallbacks
 import com.fsck.k9.activity.MessageLoaderHelperFactory
 import com.fsck.k9.controller.MessageReference
 import com.fsck.k9.controller.MessagingController
+import com.fsck.k9.ecdsa.EcPoint
 import com.fsck.k9.ecdsa.EcSign
 import com.fsck.k9.ecdsa.EcSignature
+import com.fsck.k9.ecdsa.curves.Secp256k1
 import com.fsck.k9.ecdsa.hash.EcSha256
 import com.fsck.k9.fragment.AttachmentDownloadDialogFragment
 import com.fsck.k9.fragment.ConfirmationDialogFragment
@@ -56,6 +62,7 @@ import com.fsck.k9.ui.messageview.MessageCryptoPresenter.MessageCryptoMvpView
 import com.fsck.k9.ui.settings.account.AccountSettingsActivity
 import com.fsck.k9.ui.share.ShareIntentBuilder
 import com.fsck.k9.ui.withArguments
+import java.math.BigInteger
 import java.util.Locale
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -337,19 +344,61 @@ class MessageViewFragment :
     }
 
     private fun onVerifySign() {
-        var isValid : Boolean = false
+        var m_Text : String = "";
         val msg : String = message!!.preview
         val arr = msg.split(" ===== ").toTypedArray()
+
         if (arr.getOrNull(1) !== null) {
-            Log.d("Sign", arr[1])
             val signstr = arr[1].split(" ").toTypedArray()
-            val r =  signstr[0].trim().toBigInteger()
+            val r = signstr[0].trim().toBigInteger()
             val s = signstr[1].trim().toBigInteger()
-            Log.d("isValid", "Inside If")
-            isValid = EcSign.verifySignature(account.EccKeyPair!!.publicKey, arr[0].toByteArray(), EcSha256, EcSignature(r,s))
+
+            val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
+            builder.setTitle("Insert Public Key")
+
+            val input = EditText(activity)
+            input.inputType = InputType.TYPE_CLASS_TEXT
+            builder.setView(input)
+
+            builder.setPositiveButton(
+                "OK",
+                DialogInterface.OnClickListener { dialog, which ->
+                    m_Text = input.text.toString()
+                    val pubKeyArr = m_Text.split(" ").toTypedArray()
+
+                    if (pubKeyArr.getOrNull(0) != null && pubKeyArr.getOrNull(1) != null) {
+                        verify(arr[0], EcPoint(pubKeyArr[0].toBigInteger(), pubKeyArr[1].toBigInteger(), Secp256k1), r, s)
+                        //verify(arr[0], account.EccKeyPair!!.publicKey, r, s)
+                    } else {
+                        Toast.makeText(context, "Key is Invalid", Toast.LENGTH_LONG).show()
+                    }
+
+                },
+            )
+            builder.setNegativeButton(
+                "Cancel",
+                DialogInterface.OnClickListener { dialog, which -> dialog.cancel() },
+            )
+
+            builder.show()
+
+        } else {
+            Toast.makeText(context, "Message is not Signed", Toast.LENGTH_LONG).show()
+
         }
 
-        Log.d("isValid", isValid.toString())
+    }
+
+    private fun verify(message: String, pubKey: EcPoint, r: BigInteger, s: BigInteger) {
+        var toast : Toast
+        val isValid = EcSign.verifySignature(pubKey, message.toByteArray(), EcSha256, EcSignature(r,s))
+        if (isValid) {
+            toast = Toast.makeText(context, "Message is valid", Toast.LENGTH_LONG)
+        } else {
+            toast = Toast.makeText(context, "Message is not valid", Toast.LENGTH_LONG)
+        }
+        toast.show()
+
     }
 
     private fun onToggleTheme() {
