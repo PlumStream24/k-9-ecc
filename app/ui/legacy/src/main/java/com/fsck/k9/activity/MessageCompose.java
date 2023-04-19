@@ -29,6 +29,8 @@ import android.os.Parcelable;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
+
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -71,11 +73,9 @@ import com.fsck.k9.activity.compose.RecipientPresenter;
 import com.fsck.k9.activity.compose.ReplyToPresenter;
 import com.fsck.k9.activity.compose.ReplyToView;
 import com.fsck.k9.activity.compose.SaveMessageTask;
-import com.fsck.k9.ecdsa.EcKeyGenerator;
-import com.fsck.k9.ecdsa.EcKeyPair;
 import com.fsck.k9.ecdsa.EcSignature;
 import com.fsck.k9.ecdsa.hash.EcHasher;
-import com.fsck.k9.ecdsa.hash.EcSha256;
+import com.fsck.k9.ecdsa.hash.EcSha3;
 import com.fsck.k9.activity.misc.Attachment;
 import com.fsck.k9.autocrypt.AutocryptDraftStateHeaderParser;
 import com.fsck.k9.contact.ContactIntentHelper;
@@ -83,7 +83,6 @@ import com.fsck.k9.controller.MessageReference;
 import com.fsck.k9.controller.MessagingController;
 import com.fsck.k9.controller.MessagingListener;
 import com.fsck.k9.controller.SimpleMessagingListener;
-import com.fsck.k9.ecdsa.EcCurve;
 import com.fsck.k9.ecdsa.EcSign;
 import com.fsck.k9.fragment.AttachmentDownloadDialogFragment;
 import com.fsck.k9.fragment.AttachmentDownloadDialogFragment.AttachmentDownloadCancelListener;
@@ -130,7 +129,6 @@ import org.openintents.openpgp.OpenPgpApiManager;
 import org.openintents.openpgp.util.OpenPgpApi;
 import timber.log.Timber;
 
-import com.fsck.k9.ecdsa.curves.Secp256k1;
 
 @SuppressWarnings("deprecation") // TODO get rid of activity dialogs and indeterminate progress bars
 public class MessageCompose extends K9Activity implements OnClickListener,
@@ -256,6 +254,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
     private boolean eccSignEnabled = false;
 
     private boolean hanzo_encrypt = false;
+    private String hanzo_key = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -731,13 +730,13 @@ public class MessageCompose extends K9Activity implements OnClickListener,
         String msg = CrLfConverter.toCrLf(messageContentView.getText());
         if (eccSignEnabled) {
             //EcKeyPair keyPair = EcKeyGenerator.INSTANCE.newInstance((EcCurve) Secp256k1.INSTANCE);
-            EcSignature sign = EcSign.INSTANCE.signData(account.getEccKeyPair(), msg.getBytes(), (EcHasher) EcSha256.INSTANCE);
+            EcSignature sign = EcSign.INSTANCE.signData(account.getEccKeyPair(), msg.getBytes(), (EcHasher) EcSha3.INSTANCE);
             msg = msg + "\n=====\n" + sign.getR().toString() + "\n" + sign.getS().toString();
         }
 
         if (hanzo_encrypt) {
             HanzoEncryptor hanzoEncryptor = new HanzoEncryptor();
-            BigInteger key = new BigInteger("320265757102059730318470218759311257840");
+            BigInteger key = new BigInteger(hanzo_key);
             msg = hanzoEncryptor.string_encrypt(msg, key);
         }
 
@@ -1076,10 +1075,40 @@ public class MessageCompose extends K9Activity implements OnClickListener,
         } else if (id == R.id.hanzo_encrypt) {
             hanzo_encrypt = !hanzo_encrypt;
             item.setChecked(hanzo_encrypt);
+            if (hanzo_encrypt) {
+                onHanzoEncrypt();
+            }
         } else {
             return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private void onHanzoEncrypt() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Insert Key");
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                hanzo_key = input.getText().toString();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     @Override

@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.os.SystemClock
 import android.text.InputType
-import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.Menu
@@ -29,7 +28,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import com.fsck.k9.Account
 import com.fsck.k9.K9
-import com.fsck.k9.activity.HanzoEncryptor
 import com.fsck.k9.activity.MessageCompose
 import com.fsck.k9.activity.MessageLoaderHelper
 import com.fsck.k9.activity.MessageLoaderHelper.MessageLoaderCallbacks
@@ -40,7 +38,7 @@ import com.fsck.k9.ecdsa.EcPoint
 import com.fsck.k9.ecdsa.EcSign
 import com.fsck.k9.ecdsa.EcSignature
 import com.fsck.k9.ecdsa.curves.Secp256k1
-import com.fsck.k9.ecdsa.hash.EcSha256
+import com.fsck.k9.ecdsa.hash.EcSha3
 import com.fsck.k9.fragment.AttachmentDownloadDialogFragment
 import com.fsck.k9.fragment.ConfirmationDialogFragment
 import com.fsck.k9.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener
@@ -398,7 +396,7 @@ class MessageViewFragment :
 
     private fun verify(message: String, pubKey: EcPoint, r: BigInteger, s: BigInteger) {
         var toast : Toast
-        val isValid = EcSign.verifySignature(pubKey, message.toByteArray(), EcSha256, EcSignature(r,s))
+        val isValid = EcSign.verifySignature(pubKey, message.toByteArray(), EcSha3, EcSignature(r,s))
         if (isValid) {
             toast = Toast.makeText(context, "Message is valid", Toast.LENGTH_LONG)
         } else {
